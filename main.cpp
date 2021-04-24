@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     if(getCPUInfo(info))
     {
         qInfo() << QString("qCPUInfo::cpu_uuid:%0").arg(info.cpu_uuid);
+        qInfo() << QString("qCPUInfo::dev_uuid:%0").arg(info.dev_uuid);
         qInfo() << QString("qCPUInfo::cpumanfc:%0").arg(info.cpumanfc);
         qInfo() << QString("qCPUInfo::cpumodel:%0").arg(info.cpumodel);
     }

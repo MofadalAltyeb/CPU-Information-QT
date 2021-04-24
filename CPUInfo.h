@@ -21,10 +21,18 @@
 struct qCPUInfo
 {
     uint32_t regs[4];
+    QString dev_uuid;
     QString cpu_uuid;
     QString cpumanfc;
     QString cpumodel;
 };
+
+QByteArray GetMD5Hash(QByteArray buff)
+{
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    hash.addData(buff);
+    return hash.result().toHex();
+}
 
 static inline void GetCPUID(uint *eax, uint *ebx, uint *ecx, uint *edx)
 {
@@ -74,6 +82,21 @@ int getCPUInfo(qCPUInfo &cpuinfo)
         , sizeof(uint32_t)*2, 16, QChar('0'))
     };
 
+    QByteArray hwid = QString("%0%1%2%3").arg(cpuid[0], cpuid[1], cpuid[2], cpuid[3]).toUtf8();
+    QByteArray algo = {};
+    uint8_t hwid_cnt = hwid.length()/2;
+    for (int i = 0; i < hwid_cnt; i++)
+    {
+        QByteArray sum0 = GetMD5Hash(hwid.mid(i*2, 2)).mid(hwid_cnt, 2);
+        QByteArray csum = GetMD5Hash(sum0).mid(i, 2).toUpper();
+        algo.append(csum);
+    }
+
+    const QString pcuid =
+    {
+        QString("%0").arg(GetMD5Hash(algo).data())
+    };
+
     const QString venid[3] =
     {
         QByteArray::fromHex(QString("%0").arg(qFromBigEndian(cpuinfo.regs[1])
@@ -88,6 +111,7 @@ int getCPUInfo(qCPUInfo &cpuinfo)
     cpuinfo.cpumodel.append(qcpu->value(ProcessorNameStr).toString());
     delete qcpu;
 
+    cpuinfo.dev_uuid.append(QString("%0").arg(pcuid).toUpper());
     cpuinfo.cpu_uuid.append(QString("%0-%1-%2-%3").arg(cpuid[0], cpuid[1], cpuid[2], cpuid[3]).toUpper());
     cpuinfo.cpumanfc.append(QString("%0%1%2").arg(venid[0], venid[1], venid[2]));
 
