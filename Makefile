@@ -127,6 +127,9 @@ Makefile: qCPUInfo.pro C:/Qt/Static_5.14.2/5.14.2/mkspecs/win32-g++/qmake.conf C
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_datavisualization_private.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_dbus.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_dbus_private.pri \
+		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_designer.pri \
+		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_designer_private.pri \
+		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_designercomponents_private.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_devicediscovery_support_private.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_edid_support_private.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_eventdispatcher_support_private.pri \
@@ -287,6 +290,7 @@ Makefile: qCPUInfo.pro C:/Qt/Static_5.14.2/5.14.2/mkspecs/win32-g++/qmake.conf C
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtpeakcanbus.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtposition_positionpoll.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtposition_serialnmea.pri \
+		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensorgestures_counterplugin.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensorgestures_plugin.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensorgestures_shakeplugin.pri \
 		C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensors_generic.pri \
@@ -400,6 +404,9 @@ C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_datavisualization.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_datavisualization_private.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_dbus.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_dbus_private.pri:
+C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_designer.pri:
+C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_designer_private.pri:
+C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_designercomponents_private.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_devicediscovery_support_private.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_edid_support_private.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_lib_eventdispatcher_support_private.pri:
@@ -560,6 +567,7 @@ C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtpassthrucanbus.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtpeakcanbus.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtposition_positionpoll.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtposition_serialnmea.pri:
+C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensorgestures_counterplugin.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensorgestures_plugin.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensorgestures_shakeplugin.pri:
 C:/Qt/Static_5.14.2/5.14.2/mkspecs/modules/qt_plugin_qtsensors_generic.pri:

@@ -4,6 +4,17 @@
 #include <QtCore>
 #include <intrin.h>
 
+//#ifdef __GNUC__
+//#include <cpuid.h>
+//#elif defined(_MSC_VER)
+//#if _MSC_VER >= 1400
+//#include <intrin.h>
+//#endif
+//#else
+//#error Only supports MSVC or GCC
+//#endif
+//using namespace  std;
+
 #define ProcessorInfoLoc "HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"
 #define ProcessorNameStr "ProcessorNameString"
 
@@ -17,24 +28,32 @@ struct qCPUInfo
 
 static inline void GetCPUID(uint *eax, uint *ebx, uint *ecx, uint *edx)
 {
-#ifdef _WIN32FFFF //works well also
-    uint32_t native_regs[4] = {};
-    __cpuidex((int *)&native_regs, 0, 0);
-    memcpy(eax, &native_regs[0], sizeof (uint32_t));
-    memcpy(ebx, &native_regs[1], sizeof (uint32_t));
-    memcpy(ecx, &native_regs[2], sizeof (uint32_t));
-    memcpy(edx, &native_regs[3], sizeof (uint32_t));
-#else
-    /* ecx is often an input as well as an output. */
-    asm volatile("cpuid"
-                 : "=a" (*eax),
-                 "=b" (*ebx),
-                 "=c" (*ecx),
-                 "=d" (*edx)
-                 : "0" (*eax), "2" (*ecx)
-                 : "memory");
+    //0
+    uint32_t regs[4] = {};
+    __cpuid((int*)regs, 0);
+    memcpy(eax, &regs[0], sizeof (uint32_t));
+    memcpy(ebx, &regs[1], sizeof (uint32_t));
+    memcpy(ecx, &regs[2], sizeof (uint32_t));
+    memcpy(edx, &regs[3], sizeof (uint32_t));
 
-#endif
+//    //1
+//    uint32_t native_regs[4] = {};
+//    __cpuidex((int *)&native_regs, 0, 0);
+//    memcpy(eax, &native_regs[0], sizeof (uint32_t));
+//    memcpy(ebx, &native_regs[1], sizeof (uint32_t));
+//    memcpy(ecx, &native_regs[2], sizeof (uint32_t));
+//    memcpy(edx, &native_regs[3], sizeof (uint32_t));
+
+//    //2
+//    /* ecx is often an input as well as an output. */
+//    asm volatile("cpuid"
+//                 : "=a" (*eax),
+//                 "=b" (*ebx),
+//                 "=c" (*ecx),
+//                 "=d" (*edx)
+//                 : "0" (*eax), "2" (*ecx)
+//                 : "memory");
+
 }
 
 int getCPUInfo(qCPUInfo &cpuinfo)
