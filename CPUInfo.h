@@ -3,95 +3,61 @@
 
 #include <QtCore>
 #include <intrin.h>
-
-//#ifdef __GNUC__
-//#include <cpuid.h>
-//#elif defined(_MSC_VER)
-//#if _MSC_VER >= 1400
-//#include <intrin.h>
-//#endif
-//#else
-//#error Only supports MSVC or GCC
-//#endif
-//using namespace  std;
-
-#define ProcessorInfoLoc "HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0"
-#define ProcessorNameStr "ProcessorNameString"
+#include <cpuid.h>
 
 struct qCPUInfo
 {
-    uint32_t regs[4];
-    QString cpu_uuid;
-    QString cpumanfc;
-    QString cpumodel;
+    QString cpuID;
+    QString devID;
 };
 
-static inline void GetCPUID(uint *eax, uint *ebx, uint *ecx, uint *edx)
+QByteArray GetMD5Hash(QByteArray buff)
 {
-    //0
-    uint32_t regs[4] = {};
-    __cpuid((int*)regs, 0);
-    memcpy(eax, &regs[0], sizeof (uint32_t));
-    memcpy(ebx, &regs[1], sizeof (uint32_t));
-    memcpy(ecx, &regs[2], sizeof (uint32_t));
-    memcpy(edx, &regs[3], sizeof (uint32_t));
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    hash.addData(buff);
+    return hash.result().toHex();
+}
+QString GetCpuId()
+{
+    QString cpuid = "";
+    unsigned int dwBuf[4];
+    int InfoType = 1;
+    __cpuid(InfoType, dwBuf[0], dwBuf[1], dwBuf[2], dwBuf[3]);
+    __cpuid_count(InfoType, 0, dwBuf[0],dwBuf[1],dwBuf[2],dwBuf[3]);
+    cpuid = QString::number(dwBuf[3], 16).toUpper();
+    cpuid = cpuid + QString::number(dwBuf[0], 16).toUpper();
+    return cpuid;
+}
 
-//    //1
-//    uint32_t native_regs[4] = {};
-//    __cpuidex((int *)&native_regs, 0, 0);
-//    memcpy(eax, &native_regs[0], sizeof (uint32_t));
-//    memcpy(ebx, &native_regs[1], sizeof (uint32_t));
-//    memcpy(ecx, &native_regs[2], sizeof (uint32_t));
-//    memcpy(edx, &native_regs[3], sizeof (uint32_t));
-
-//    //2
-//    /* ecx is often an input as well as an output. */
-//    asm volatile("cpuid"
-//                 : "=a" (*eax),
-//                 "=b" (*ebx),
-//                 "=c" (*ecx),
-//                 "=d" (*edx)
-//                 : "0" (*eax), "2" (*ecx)
-//                 : "memory");
-
+QString GetMeCode()
+{
+    QString strMe = GetCpuId() ;
+    QByteArray ba = strMe.toLatin1();
+    QString strTemp = ba.toBase64();
+    return strTemp;
 }
 
 int getCPUInfo(qCPUInfo &cpuinfo)
 {
-    cpuinfo.regs[0] = 0;
-
-    GetCPUID(&cpuinfo.regs[0], &cpuinfo.regs[1], &cpuinfo.regs[2], &cpuinfo.regs[3]);
-
-    const QString cpuid[4] =
+    QByteArray hwid = GetMeCode().toUtf8().toHex();
+    QByteArray algo = {};
+    uint8_t hwid_cnt = hwid.length()/2;
+    for (int i = 0; i < hwid_cnt; i++)
     {
-        QString("%0").arg(cpuinfo.regs[0]
-        , sizeof(uint32_t)*2, 16, QChar('0')),
-        QString("%0").arg(cpuinfo.regs[1]
-        , sizeof(uint32_t)*2, 16, QChar('0')),
-        QString("%0").arg(cpuinfo.regs[2]
-        , sizeof(uint32_t)*2, 16, QChar('0')),
-        QString("%0").arg(cpuinfo.regs[3]
-        , sizeof(uint32_t)*2, 16, QChar('0'))
+        QByteArray sum0 = GetMD5Hash(hwid.mid(i*2, 2)).mid(hwid_cnt, 2);
+        QByteArray csum = GetMD5Hash(sum0).mid(i, 2).toUpper();
+        algo.append(csum);
+    }
+
+    const QString pcuid =
+    {
+        QString("%0").arg(GetMD5Hash(algo).data())
     };
 
-    const QString venid[3] =
-    {
-        QByteArray::fromHex(QString("%0").arg(qFromBigEndian(cpuinfo.regs[1])
-        , sizeof(uint32_t)*2, 16, QChar('0')).toUtf8()),
-        QByteArray::fromHex(QString("%0").arg(qFromBigEndian(cpuinfo.regs[3])
-        , sizeof(uint32_t)*2, 16, QChar('0')).toUtf8()),
-        QByteArray::fromHex(QString("%0").arg(qFromBigEndian(cpuinfo.regs[2])
-        , sizeof(uint32_t)*2, 16, QChar('0')).toUtf8()),
-    };
+    cpuinfo.cpuID.append(QString("%0").arg(hwid.data()).toUpper());
+    cpuinfo.devID.append(QString("%0").arg(pcuid).toUpper());
 
-    QSettings *qcpu = new QSettings(ProcessorInfoLoc, QSettings::NativeFormat);
-    cpuinfo.cpumodel.append(qcpu->value(ProcessorNameStr).toString());
-    delete qcpu;
-
-    cpuinfo.cpu_uuid.append(QString("%0-%1-%2-%3").arg(cpuid[0], cpuid[1], cpuid[2], cpuid[3]).toUpper());
-    cpuinfo.cpumanfc.append(QString("%0%1%2").arg(venid[0], venid[1], venid[2]));
-
-    return cpuinfo.cpu_uuid.size();
+    return 1;
 }
 
 #endif // CPUINFO_H
